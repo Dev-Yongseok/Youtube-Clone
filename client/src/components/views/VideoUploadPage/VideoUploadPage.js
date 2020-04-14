@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import {Typography, Button, Form, message, Input, Icon } from 'antd'
+import {Typography, Button, Form, /*message, */ Input, Icon } from 'antd'
 import Dropzone from 'react-dropzone'
 import Axios from 'axios'
 
@@ -24,9 +24,12 @@ function VideoUploadPage() {
     const [Description, setDescription] = useState("")
     const [Private, setPrivate] = useState(0)
     const [Category, setCategory] = useState("Film & Animation")
+    const [FilePath, setFilePath] = useState("")
+    const [Duration, setDuration] = useState("")
+    const [ThumnailPath, setThumnailPath] = useState("")
 
     const onDrop = (files) => {
-        let formData = new FormData;
+        let formData = new FormData();
         const config ={
             header : {'content-type' : 'multipart/form-data'}
         }
@@ -43,10 +46,13 @@ function VideoUploadPage() {
                         fileName : response.data.fileName
                     }
 
+                    setFilePath(response.data.url)
+
                     Axios.post('/api/video/thumbnail', variable)
                         .then(response => {
                             if (response.data.success) {
-                                
+                                setDuration(response.data.fileDuration)
+                                setThumnailPath(response.data.url)
                             } else {
                                 alert('썸네일 생성에 실패했습니다.')
                             }
@@ -77,13 +83,13 @@ function VideoUploadPage() {
             <div style ={{ textAlign : 'center', marginBottom : '2rem'}}>
                 <Title level={2}>Upload Video</Title>
             </div>
-            <Form onSubmit>
+            <Form /*onSubmit*/>
                 <div style={{display : 'flex', justifyContent:'space-between'}}>
                    { /* drop zone */ }
                     <Dropzone 
                         onDrop={onDrop}
                         multiple={false}
-                        maxSize={1000000000} >
+                        maxSize={1000000000000} >
                             {
                                 ({getRootProps, getInputProps}) => (
                                 <div style={{ width : '300px', height : '240px', border : '1px solid lightgray', display : 'flex',
@@ -96,9 +102,11 @@ function VideoUploadPage() {
                         
                     </Dropzone>
                    { /* Thumbnail */ }
-                    <div>
-                        <img src alt />
-                    </div>
+                   { ThumnailPath && 
+                        <div>
+                            <img src={`http://localhost:5000/${ThumnailPath}`} alt="thumbnail" />
+                        </div>
+                   }
                 </div>
 
                 <br/>
@@ -139,7 +147,7 @@ function VideoUploadPage() {
 
                 <br />
                 <br />
-                <Button type="primary" size="large" onClick>Submit</Button>
+                <Button type="primary" size="large" /*on Click*/>Submit</Button>
             </Form>
         </div>
     )

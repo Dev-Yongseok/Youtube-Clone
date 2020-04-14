@@ -8,24 +8,26 @@ const ffmpeg = require('fluent-ffmpeg')
 
 // STORAGE MULTER CONFIG
 let storage = multer.diskStorage({
-    destination : (req, file, cb) => {
+    destination : function(req, file, cb) {
         cb(null, "uploads/");
     },
 
-    filename : (req, file, cb) => {
+    filename : function(req, file, cb) {
         cb(null, `${Date.now()}_${file.originalname}`);
-    },
-
-    fileFilter : (req, file, cb) => {
-        const ext = path.extname(file.originalname)
-        if(ext !== '.mp4'){
-            return cb(res.status(400).end('only mp4 is allowed'), false);
-        }
-        cb(null, true)
     }
 });
 
-const upload = multer({storage : storage}).single("file")
+const mp4Filter = (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    // 동영상이 아닐 때
+    if (ext !== '.mp4') {
+        return cb(new Error('only mp4 allowed'), false)
+    }
+    // 동영상 파일 일 때
+    cb(null, true)
+}
+
+const upload = multer({storage : storage, fileFilter : mp4Filter}).single("file")
 //=================================
 //             Video
 //=================================
@@ -74,7 +76,7 @@ router.post("/thumbnail", (req, res) => {
         .screenshots({
             count : 3,
             folder : 'uploads/thumbnails',
-            size : '320 x 240'
+            size : '320x240'
         })
 
 })
