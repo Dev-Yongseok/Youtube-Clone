@@ -177,7 +177,7 @@ function VideoUploadPage(props) {
 
                 <br />
                 <br />
-                <Button type="primary" size="large" on Click={onSubmit}>Submit</Button>
+                <Button type="primary" size="large" onClick={onSubmit}>Submit</Button>
             </Form>
         </div>
     )
