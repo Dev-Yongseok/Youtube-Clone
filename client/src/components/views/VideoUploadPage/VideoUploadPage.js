@@ -27,7 +27,7 @@ function VideoUploadPage(props) {
     const [Category, setCategory] = useState("Film & Animation")
     const [FilePath, setFilePath] = useState("")
     const [Duration, setDuration] = useState("")
-    const [ThumnailPath, setThumnailPath] = useState("")
+    const [ThumbnailPath, setThumbnailPath] = useState("")
 
     const onDrop = (files) => {
         let formData = new FormData();
@@ -53,7 +53,7 @@ function VideoUploadPage(props) {
                         .then(response => {
                             if (response.data.success) {
                                 setDuration(response.data.fileDuration)
-                                setThumnailPath(response.data.url)
+                                setThumbnailPath(response.data.url)
                             } else {
                                 alert('썸네일 생성에 실패했습니다.')
                             }
@@ -68,14 +68,14 @@ function VideoUploadPage(props) {
         e.preventDefault();
 
         const variable = {
-            writer      : user.userData._id ,
-            title       : VideoTitle ,
+            writer      :  user.userData._id ,
+            title       :  VideoTitle ,
             description :  Description,
             privacy     :  Private,
             filePath    :  FilePath,
             category    :  Category,
             duration    :  Duration,
-            thumbnail   :  ThumnailPath,
+            thumbnail   :  ThumbnailPath,
         }
 
         Axios.post('/api/video/uploadVideo', variable)
@@ -132,9 +132,9 @@ function VideoUploadPage(props) {
                         
                     </Dropzone>
                    { /* Thumbnail */ }
-                   { ThumnailPath && 
+                   { ThumbnailPath && 
                         <div>
-                            <img src={`http://localhost:5000/${ThumnailPath}`} alt="thumbnail" />
+                            <img src={`http://localhost:5000/${ThumbnailPath}`} alt="thumbnail" />
                         </div>
                    }
                 </div>
