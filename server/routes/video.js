@@ -44,7 +44,6 @@ router.post("/uploadfiles", (req, res) => {
 router.post("/uploadVideo", (req, res) => {
     
     // 비디오 정보들을 저장한다.
-
     const video = new Video(req.body)
 
     video.save((err, doc) => {
@@ -63,6 +62,17 @@ router.get('/getVideos', (req, res) =>{
             res.status(200).json({ success : true , videos})
         })
 })
+
+router.post("/getVideoDetail", (req, res) => {
+    
+    Video.findOne({"_id" : req.body.videoId})
+        .populate('writer')
+        .exec((err, videoDetail) => {
+            if(err) return res.status(400).send(err)
+
+            return res.status(200).json({ success : true , videoDetail })
+        })
+    });
 
 
 router.post("/thumbnail", (req, res) => {
@@ -96,9 +106,12 @@ router.post("/thumbnail", (req, res) => {
             return res.json({ success : false , err})
         })
         .screenshots({
+            // Will take screenshots at 20%, 40%, 60% and 80% of the video
             count : 3,
             folder : 'uploads/thumbnails',
-            size : '320x240'
+            size : '320x240',
+            // '%b' : input base name ( filename w/o extention)
+            filename:'thumbnail_%b.png'
         })
 
 })
