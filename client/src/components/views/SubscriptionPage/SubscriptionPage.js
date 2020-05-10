@@ -40,7 +40,8 @@ function SubscriptionPage() {
                             </div>
                         </div>
                     </a>
-                    <br />
+                    <br/>
+
                     <Meta 
                         avatar = {
                             <Avatar src = {video.writer.image} />
