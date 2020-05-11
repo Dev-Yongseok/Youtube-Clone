@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {Row, Col, List, Avatar} from 'antd'
 import Axios from 'axios'
-import SideVideo from '../VideoDetailPage/Sections/SideVideo'
-import Subscribe from '../VideoDetailPage/Sections/Subscribe'
-import Comment from '../VideoDetailPage/Sections/Comment'
+import SideVideo from './Sections/SideVideo'
+import Subscribe from './Sections/Subscribe'
+import Comment from './Sections/Comment'
 
 function VideoDetailPage(props) {
 
@@ -11,19 +11,39 @@ function VideoDetailPage(props) {
     const variable = { videoId: videoId }
 
     const [VideoDetail, setVideoDetail] = useState([])
-    
+    const [Comments, setComments] = useState([])
+    const [CommentCount, setCommentCount] = useState("")
+
     useEffect(() => {
+
+        // 비디오 정보 가져오기
         Axios.post('/api/video/getVideoDetail', variable)
             .then(response => {
                 if(response.data.success){
                     console.log(response.data.videoDetail.filePath)
-                    setVideoDetail(response.data.videoDetail);
+                    setVideoDetail(response.data.videoDetail)
                 } else {
                     alert('비디오 정보를 가져오는데 실패했습니다.')
                 }
             })
             
+        // 댓글 정보 가져오기
+        Axios.post('/api/comment/getComments', variable)
+            .then(response => {
+                if(response.data.success){
+                    console.log(response.data.comments)
+                    setCommentCount(response.data.comments.length)
+                    setComments(response.data.comments)
+                } else {
+                    alert('댓글 정보를 가져오는데 실패 했습니다.')
+                }
+            })
     }, [])
+
+    // Comment에서 보내온 결과로 댓글을 저장함
+    const refreshFunction = (newComment) => {
+        setComments(Comments.concat(newComment))
+    }
 
     if(VideoDetail.writer){
         // console.log(VideoDetail)
@@ -32,7 +52,7 @@ function VideoDetailPage(props) {
             && <Subscribe userTo={VideoDetail.writer._id} userFrom={localStorage.getItem('userId')}/>
 
         return (
-            <Row gutter={[16, 16]}>
+            <Row>
                 <Col lg={18} xs={24}>
     
                     <div style={{ width : '100%' , padding : '3rem 4rem'}}>
@@ -48,9 +68,13 @@ function VideoDetailPage(props) {
                             />
                         </List.Item>
     
-                        {/* comments */}
+                        {/* ======== comments =========*/}
                         < Comment // Props ▼
+                            refreshFunction = { refreshFunction }
+                            commentLists = { Comments }
+                            commentCount = { CommentCount }
                             postId = {videoId}
+                            videoDetail = { VideoDetail }
                         />
                     </div>
     

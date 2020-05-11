@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
+import { Button, Input } from 'antd';
 import Axios from 'axios'
 import { useSelector } from 'react-redux' // functional Component 이기 때문에 redux-hook 사용
+import SingleComment from './SingleComment'
+import ReplyComment from './ReplyComment'
+const { TextArea } = Input ;
 
 // Comment.js = Comment Lists + Root Comment Form 
 function Comment(props) {
     const videoId = props.postId;
 
     const user = useSelector(state => state.user )
-    const [commentValue, setCommentValue] = useState("")
+    const [CommentValue, setCommentValue] = useState("")
 
     // 댓글이 입력 되도록 설정함
     const handleClick = (event) => {
@@ -17,20 +21,26 @@ function Comment(props) {
     // 댓글 버튼 눌렀을 때 form 도 같이 제출 되게
     const onSubmit = (event) => {
         event.preventDefault();
-
-        console.log(videoId)
+        setCommentValue("")
+        console.log(videoId._id)
 
         const variables = {
-            content : commentValue,
+            content : CommentValue,
             writer : user.userData._id ,
             postId : videoId
         }
 
-        if(user.userData.isAuth == true){
+        if(user.userData.isAuth === true ){
             Axios.post('/api/comment/saveComment', variables )
             .then(response => {
                 if (response.data.success) {
-                    console.log(variables)
+                    console.log(response.data.result)
+
+                    // 댓글 저장 후 TextArea에 남아 있는 글자 지워줌
+                    setCommentValue("")
+
+                    // Comment 에서 결과 값을 Video Detail Page로 보내줌.
+                    props.refreshFunction(response.data.result)
                 } else {
                     alert('댓글을 저장하는데 실패 했습니다.')
                     }
@@ -45,22 +55,43 @@ function Comment(props) {
     return (
         <div>
             <br />
-            <p> Comments </p>
+            <h2> {props.commentCount}   Comments </h2>
             <hr/>
 
-            {/* Comment Lists = (Single Comment + Reply Comment) */}
+            {props.commentLists && props.commentLists.map((comment, index) => (
+                (!comment.responseTo &&
+                    <React.Fragment>
+                        {/* Comment Lists = (Single Comment + Reply Comment) */}
+                        <SingleComment 
+                            // props
+                            key={index}
+                            videoDetail={props.videoDetail}
+                            refreshFunction = {props.refreshFunction}
+                            comment={comment}
+                            postId = {props.videoId}
+                        />
+
+                        <ReplyComment 
+                            // props
+                            postId = {props.videoId}
+                            parentCommentId={comment._id}
+                            commentLists={props.commentLists}
+                            refreshFunction = {props.refreshFunction}
+                        />
+                    </React.Fragment>                    
+                )
+            ))}
 
             {/* Root Comment Form */}
-
-            <form style = {{ display : 'flex' }} onSubmit = {onSubmit}>
-                <textarea
+            <form style = {{ display : 'flex'}} onSubmit = {onSubmit}>
+                <TextArea
                     style = {{ width : '100%', borderRadius : '5px' }}
                     onChange = { handleClick }
-                    value = { commentValue }
+                    value = { CommentValue }
                     placeholder="Add a public comment... "
                 />
                 <br/>
-                <button style = {{ border : '0', color : 'white', backgroundColor : 'grey', width : '20%', height : '52px'}} onClick = {onSubmit} > COMMENT </button>
+                <Button style = {{ border : '0', color : 'white', backgroundColor : 'grey', width : '20%', height : '52px'}} onClick = {onSubmit} > COMMENT </Button>
             </form>
         </div>
     )
