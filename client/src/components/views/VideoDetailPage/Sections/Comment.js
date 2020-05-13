@@ -67,12 +67,12 @@ function Comment(props) {
                             videoDetail={props.videoDetail}
                             refreshFunction = {props.refreshFunction}
                             comment={comment}
-                            postId = {props.videoId}
+                            postId = {props.postId}
                         />
 
                         <ReplyComment 
                             // props
-                            postId = {props.videoId}
+                            postId = {props.postId}
                             parentCommentId={comment._id}
                             commentLists={props.commentLists}
                             refreshFunction = {props.refreshFunction}

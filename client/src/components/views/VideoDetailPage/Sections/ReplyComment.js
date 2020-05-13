@@ -19,30 +19,30 @@ function ReplyComment(props) {
     }, [props.commentLists, props.parentCommentId])
 
     let renderReplyComment = (parentCommentId) =>
+    (
         props.commentLists.map((comment, index) => (
             <React.Fragment>
                 {/* Comment Lists = (Single Comment + Reply Comment) */}
-                { comment.responseTo === parentCommentId &&
+                { comment.responseTo == parentCommentId &&
                     <div style={{ width : '80%', marginLeft : '40px'}}>
                         <SingleComment 
                             // props
                             comment={comment}
                             postId = {props.postId}
                             refreshFunction = {props.refreshFunction}
-                        />
-
+                            />
                         <ReplyComment 
                             // props
                             commentLists={props.commentLists}
                             parentCommentId={comment._id}
                             postId={props.postId}
                             refreshFunction={props.refreshFunction}
-                        />
+                            />
                     </div>
                 }
             </React.Fragment>
         ))
-
+    )
         const onHandleChange = () => {
             setOpenReplyComments(!OpenReplyComments)
         }
@@ -50,7 +50,7 @@ function ReplyComment(props) {
     return (
         <div>
             { ChildCommentNumber > 0 &&
-                <p style={{ fontSize : '14px', margin : 0, color : 'grey'}} onClick = {onHandleChange}>
+                <p style={{ fontSize : '14px', marginLeft : '40px', color : 'grey'}} onClick = {onHandleChange}>
                     View {ChildCommentNumber} more comment(s)
                 </p>
             }

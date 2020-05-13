@@ -74,7 +74,7 @@ function SingleComment(props) {
             {/* Default = false */}
             { OpenReply && // Click Reply => Open Reply Form
                     //Reply Form 
-                    <form style={{ display: 'flex'}} onSubmit={onSubmit} >
+                    <form style={{ display: 'flex', marginLeft : '40px'}} onSubmit={onSubmit} >
                         <TextArea
                             style={{ width: '100%', borderRadius: '5px' }}
                             onChange={onHandleChange}
