@@ -84,12 +84,8 @@ function VideoDetailPage(props) {
                 <Col lg={6} xs={24}>
                     <SideVideo />
                 </Col>
-
-
             </Row>
         )
-
-
     } else {
         return(
             <div><h2>Loading....</h2></div>

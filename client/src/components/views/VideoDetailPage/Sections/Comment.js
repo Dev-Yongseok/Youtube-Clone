@@ -64,7 +64,6 @@ function Comment(props) {
                         {/* Comment Lists = (Single Comment + Reply Comment) */}
                         <SingleComment 
                             // props
-                            key={index}
                             videoDetail={props.videoDetail}
                             refreshFunction = {props.refreshFunction}
                             comment={comment}

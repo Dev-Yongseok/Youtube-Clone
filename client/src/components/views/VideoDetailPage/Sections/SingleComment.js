@@ -9,34 +9,35 @@ function SingleComment(props) {
     const user = useSelector(state => state.user )
 
     const [OpenReply, setOpenReply] = useState(false)
-    const [CommentValue, setCommentValue] = useState("")
+    const [ReplyValue, setReplyValue] = useState("")
 
     // 대댓글 버튼 
     const onClickReplyOpen = ( ) => {
         setOpenReply(!OpenReply);
+        console.log(!OpenReply ? "Open" : "Close" )
     }
 
     const onHandleChange = (event) => {
-        setCommentValue(event.currentTarget.CommentValue)
+        setReplyValue(event.currentTarget.value)
     }
 
     const onSubmit = (event) => {
         event.preventDefault();
         const variables = {
-            content : CommentValue,
+            content : ReplyValue,
             writer : user.userData._id ,
             postId : props.postId ,
             responseTo : props.comment._id
         }
 
-        if(user.userData.isAuth == true){
+        if(user.userData.isAuth === true){
             Axios.post('/api/comment/saveComment', variables )
             .then(response => {
                 if (response.data.success) {
                     console.log(response.data.result)
 
                     // 댓글 저장 후 TextArea에 남아 있는 글자 지워줌
-                    setCommentValue("")
+                    setReplyValue("")
                     setOpenReply(!OpenReply)
                     // Comment로 보냄 (Comment를 거쳐서 VideoDetail에 도달)
                     props.refreshFunction(response.data.result)
@@ -77,7 +78,7 @@ function SingleComment(props) {
                         <TextArea
                             style={{ width: '100%', borderRadius: '5px' }}
                             onChange={onHandleChange}
-                            value={CommentValue}
+                            value={ReplyValue}
                             placeholder="Add a public reply... "
                         />
                         <br />
